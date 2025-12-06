@@ -23,7 +23,7 @@ class CacheRepository:
         return value
 
     @classmethod
-    async def create_address(
+    async def create_or_update(
         cls,
         phone: str,
         address: str,
@@ -32,7 +32,7 @@ class CacheRepository:
         overwrite: bool = False,
     ) -> bool:
         """
-        Создаёт запись в Redis.
+        Создаёт/обновляет запись в Redis.
 
         :param phone: номер телефона
         :param address: адрес
@@ -56,30 +56,6 @@ class CacheRepository:
         return True
 
     @classmethod
-    async def update_address(
-        cls,
-        phone: str,
-        address: str,
-        *,
-        ttl: int | None = None,
-    ) -> bool:
-        """
-        Обновляет адрес по телефону.
-
-        :return: True, если ключ существовал и был обновлён, False — если ключа не было.
-        """
-        key = cls._make_key(phone)
-        exists = await redis().exists(key)
-        if not exists:
-            return False
-
-        if ttl is not None:
-            await redis().set(key, address, ex=ttl)
-        else:
-            await redis().set(key, address)
-        return True
-
-    @classmethod
     async def delete_address(cls, phone: str) -> bool:
         """
         Удаляет запись из Redis.
@@ -89,11 +65,6 @@ class CacheRepository:
         key = cls._make_key(phone)
         deleted = await redis().delete(key)
         return deleted > 0
-
-    @classmethod
-    async def exists(cls, phone: str) -> bool:
-        key = cls._make_key(phone)
-        return await redis().exists(key) == 1
 
     @classmethod
     async def ping(cls):

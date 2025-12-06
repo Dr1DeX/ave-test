@@ -41,6 +41,43 @@ class HelpDeskRepository:
 
         return None
 
+    async def get_all_with_latest_addresses(
+        self,
+        *,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[tuple[Phone, Address]]:
+        """
+        Вернуть все телефоны с их последним (по created_at) адресом.
+
+        Используем подзапрос по max(created_at) на phone_id.
+        """
+        latest_subq = (
+            select(
+                Address.phone_id.label("phone_id"),
+                func.max(Address.created_at).label("max_created_at"),
+            )
+            .group_by(Address.phone_id)
+            .subquery()
+        )
+
+        stmt = (
+            select(Phone, Address)
+            .join(Address, Address.phone_id == Phone.id)
+            .join(
+                latest_subq,
+                (Address.phone_id == latest_subq.c.phone_id) & (Address.created_at == latest_subq.c.max_created_at),
+            )
+            .order_by(Phone.phone)
+            .offset(offset)
+            .limit(limit)
+        )
+
+        result = await self._session.execute(stmt)
+        rows = result.all()  # list[Row[(Phone, Address)]]
+
+        return [(row[0], row[1]) for row in rows]
+
     async def phone_exists(self, phone: str) -> bool:
         stmt = select(func.count(Phone.id)).where(Phone.phone == phone)
         result = await self._session.execute(stmt)
@@ -57,7 +94,7 @@ class HelpDeskRepository:
 
         address_obj = Address(phone_id=phone_obj.id, address=address)
         self._session.add(address_obj)
-
+        await self._session.commit()
         return phone_obj, address_obj
 
     async def add_address_to_existing_phone(
@@ -67,12 +104,14 @@ class HelpDeskRepository:
     ) -> Address:
         address_obj = Address(phone_id=phone_obj.id, address=address)
         self._session.add(address_obj)
+        await self._session.commit()
         return address_obj
 
     async def delete_by_phone(self, phone: str) -> bool:
         stmt = delete(Phone).where(Phone.phone == phone).returning(Phone.id)
         result = await self._session.execute(stmt)
         deleted_id = result.scalar_one_or_none()
+        await self._session.commit()
         return deleted_id is not None
 
     async def _get_phone_with_latest_address_by_phone(
