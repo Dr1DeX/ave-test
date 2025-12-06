@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
@@ -13,19 +13,18 @@ class Config(BaseSettings):
     ENV: str = "development"
 
     # # FastAPI
-    MICROSERVICE_NAME = "ave"  # CHANGEME
-    APP_HOST: str = "0.0.0.0"
+    MICROSERVICE_NAME: str = "ave"  # CHANGEME
+    APP_HOST: str = "localhost"
     APP_PORT: int = 8889
 
-    APP_UNIQUE_ID = uuid4().hex[:10]
-    INSTANCE_IP = "0.0.0.0"
+    APP_UNIQUE_ID: str = str(uuid4().hex[:10])
 
     # # LOGGING
     DEBUG: bool = True
 
     # Databases
     # # Postgresql
-    DATABASE_CONNECTION_URL: str = "postgresql+asyncpg://postgres:postgres@0.0.0.0:5435/ave"
+    DATABASE_CONNECTION_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/ave"
     DATABASE_MAX_OVERFLOW: int = 15
     DATABASE_POOL_SIZE: int = 30
     DATABASE_ECHO: bool = False
@@ -39,13 +38,13 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
-    DEBUG: str = False
+    DEBUG: bool = False
 
 
 def get_config() -> Config:
-    env = os.getenv("ENV", "development")
+    env = os.getenv("ENV", "local")
     config_type = {
-        "development": DevelopmentConfig(),
+        "local": DevelopmentConfig(),
         "production": ProductionConfig(),
     }
 
