@@ -7,15 +7,12 @@ from typing import AsyncIterator
 from api import init_sub_applications
 from app.configure_application import configure_application_for_run
 from core.config import config
-from core.fastapi.middlewares import SQLAlchemyMiddleware
 
 
 def make_middleware() -> list[Middleware]:
     middleware = [
-        Middleware(SQLAlchemyMiddleware),
         Middleware(CorrelationIdMiddleware, header_name="X-Request-ID", validator=None),
     ]
-
     return middleware
 
 
