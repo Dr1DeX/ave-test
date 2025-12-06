@@ -9,3 +9,9 @@ run-local:
 
 stop-local:
 	docker-compose -f docker-compose-local.yaml down -v --remove-orphans
+
+make-migration:
+	alembic revision --autogenerate -m ${m}
+
+migration:
+	alembic upgrade heads
