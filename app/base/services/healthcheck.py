@@ -4,7 +4,7 @@ from typing import Tuple
 from sqlalchemy import select
 
 from core.db.session import session
-from repositories.cache import CacheManager
+from repositories.cache import CacheRepository
 
 logger = getLogger(__name__)
 
@@ -27,7 +27,7 @@ class HealthCheckService:
     @staticmethod
     async def is_redis_healthy():
         try:
-            await CacheManager.ping()
+            await CacheRepository.ping()
             return True
         except Exception as exc:
             logger.error(f"Redis is unhealthy: {exc}")
