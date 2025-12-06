@@ -4,6 +4,7 @@ class ServiceAPIResponseStatus:
     GENERAL_ERROR = 500
     CONFLICT_DATA = 409
     NOT_FOUND_DATA = 404
+    BAD_REQUEST = 400
 
 
 class ServiceAPIResponseMessage:
@@ -12,3 +13,4 @@ class ServiceAPIResponseMessage:
     GENERAL_ERROR = "General error"
     CONFLICT_DATA = "Duplicate data"
     NOT_FOUND_DATA = "Not found data"
+    BAD_REQUEST = "Request error"
