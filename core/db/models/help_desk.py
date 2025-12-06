@@ -20,6 +20,10 @@ class Phone(Base, TimestampMixin):
         passive_deletes=True,
     )
 
+    def __init__(self, phone: str, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.phone = phone
+
 
 class Address(Base, TimestampMixin):
     __tablename__ = "addresses"
@@ -31,3 +35,8 @@ class Address(Base, TimestampMixin):
     address: Mapped[str] = mapped_column(Text, nullable=False)
 
     phone: Mapped["Phone"] = relationship("Phone", back_populates="addresses")
+
+    def __init__(self, phone_id: int, address: str, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.phone_id = phone_id
+        self.address = address
