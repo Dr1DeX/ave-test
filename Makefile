@@ -1,5 +1,5 @@
 run-staging:
-	docker-compose -f docker-compose-staging.yaml up -d --build --force-recreate
+	docker-compose -f docker-compose-staging.yaml --env-file .env.example up -d --build --force-recreate
 
 stop-staging:
 	docker-compose -f docker-compose-staging.yaml down -v --remove-orphans
