@@ -56,7 +56,7 @@ class CacheRepository:
         return True
 
     @classmethod
-    async def delete_address(cls, phone: str) -> bool:
+    async def delete_address_by_phone(cls, phone: str) -> bool:
         """
         Удаляет запись из Redis.
 

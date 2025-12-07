@@ -18,3 +18,9 @@ repos:
     hooks:
     -   id: add-trailing-comma
         args: [--py36-plus]
+
+
+-   repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
