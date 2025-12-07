@@ -1,5 +1,6 @@
 run-staging:
 	docker-compose -f docker-compose-staging.yaml --env-file .env.example up -d --build --force-recreate
+	docker exec -it api bash -c "cd /app && uv run alembic upgrade heads"
 
 stop-staging:
 	docker-compose -f docker-compose-staging.yaml down -v --remove-orphans

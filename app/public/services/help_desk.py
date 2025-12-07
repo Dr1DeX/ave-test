@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from api.public.v1.response.help_desk import HelpDeskResponseSchema, DeleteHelpDeskResponseSchema
 from core.exceptions.service import ServiceAPIException, ServiceAPIResponseStatus
 from core.exceptions.service.enum import ServiceAPIResponseMessage
+from core.utils.phone_validator import phone_validator_by_query_param
 from repositories.cache import CacheRepository
 from repositories.help_desk import HelpDeskRepository
 
@@ -42,6 +43,8 @@ class HelpDeskService:
                 message=ServiceAPIResponseMessage.BAD_REQUEST,
                 extra_data={"phone_must_be_provided_or_address": phone, "address_must_be_provided_or_phone": address},
             )
+
+        phone = phone_validator_by_query_param(phone)
 
         if phone:
             return await self._get_by_phone(phone=phone)
@@ -159,6 +162,7 @@ class HelpDeskService:
         1) Удаляем из БД (CASCADE на addresses).
         2) Удаляем запись из Redis (если была).
         """
+        phone = phone_validator_by_query_param(phone)
         deleted_id = await self.help_desk_repository.delete_by_phone(phone=phone)
         if not deleted_id:
             raise ServiceAPIException(

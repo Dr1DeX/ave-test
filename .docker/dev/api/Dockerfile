@@ -22,6 +22,8 @@ COPY app ./app
 COPY core ./core
 COPY repositories ./repositories
 COPY main.py ./main.py
+COPY alembic.ini ./alembic.ini
+COPY migrations ./migrations
 
 ENV PATH="/app/.venv/bin:${PATH}"
 
