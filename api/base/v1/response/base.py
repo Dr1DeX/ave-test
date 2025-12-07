@@ -9,5 +9,5 @@ class BaseResponseModel(BaseModel):
     """
 
     result: Any = {}
-    status: int = 0
+    status: int = 200
     error_message: str = ""

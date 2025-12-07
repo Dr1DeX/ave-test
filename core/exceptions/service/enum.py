@@ -1,6 +1,7 @@
 class ServiceAPIResponseStatus:
     SUCCESS = 200
     CREATED = 201
+    DELETED = 204
     GENERAL_ERROR = 500
     CONFLICT_DATA = 409
     NOT_FOUND_DATA = 404
